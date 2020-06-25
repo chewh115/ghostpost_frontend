@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      posts: [],
+    };
+  }
+
+  componentDidMount() {
+    fetch("http://127.0.0.1:8000/posts/")
+      .then((res) => res.json())
+      .then((data) => this.setState({ posts: data }));
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Boasts and Roasts:</h1>
+        <div>
+          {this.state.posts.map((post) => {
+            return (
+              <React.Fragment>
+                <h3>{post.title}</h3>
+                <p>{post.post}</p>
+                <p>{post.submit_time}</p>
+                <button>Up Vote {post.up_votes}</button>
+                <button>Down Vote {post.down_votes}</button>
+                <br />
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;
