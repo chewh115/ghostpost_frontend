@@ -1,6 +1,20 @@
 import React from "react";
 import "./App.css";
-import { IndividualPost } from "./Components/Post.js";
+
+const API_HOST = "http://localhost:8000";
+
+let _csrfToken = null;
+
+async function getCsrfToken() {
+  if (_csrfToken === null) {
+    const response = await fetch(`${API_HOST}/csrf/`, {
+      credentials: "include",
+    });
+    const data = await response.json();
+    _csrfToken = data.csrfToken;
+  }
+  return _csrfToken;
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -11,27 +25,25 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch("http://127.0.0.1:8000/posts/")
+    fetch(`${API_HOST}/posts/`)
       .then((res) => res.json())
       .then((data) => this.setState({ posts: data }));
   }
 
   showBoasts = () => {
-    const boastList = this.state.posts.filter(
-      (post) => post.boast_or_roast === true
-    );
-    this.setState({ posts: boastList });
+    fetch(`${API_HOST}/posts/only_boasts/`)
+      .then((res) => res.json())
+      .then((data) => this.setState({ posts: data }));
   };
 
   showRoasts = () => {
-    const roastList = this.state.posts.filter(
-      (post) => post.boast_or_roast !== true
-    );
-    this.setState({ posts: roastList });
+    fetch(`${API_HOST}/posts/only_roasts/`)
+      .then((res) => res.json())
+      .then((data) => this.setState({ posts: data }));
   };
 
   showAllPosts = () => {
-    fetch("http://127.0.0.1:8000/posts/")
+    fetch(`${API_HOST}/posts/`)
       .then((res) => res.json())
       .then((data) => this.setState({ posts: data }));
   };
@@ -56,16 +68,13 @@ class App extends React.Component {
         <div>
           {this.state.posts.map((post) => {
             return (
-              <div>
-                <IndividualPost
-                  boast={post.boast}
-                  title={post.title}
-                  post={post.post}
-                  submit_time={post.submit_time}
-                  score={post.score}
-                  up_votes={post.up_votes}
-                  down_votes={post.down_votes}
-                />
+              <div className={this.props.boast ? "boast" : "roast"}>
+                <h3>{this.props.title}</h3>
+                <p>{this.props.post}</p>
+                <p>Submitted at {this.props.submit_time}</p>
+                <p>Total score: {this.props.score}</p>
+                <button>Up Vote {this.props.up_votes}</button>
+                <button>Down Vote {this.props.down_votes}</button>
               </div>
             );
           })}
