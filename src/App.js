@@ -36,6 +36,13 @@ class App extends React.Component {
       .then((data) => this.setState({ posts: data }));
   };
 
+  sortByScore = () => {
+    let scoreSorted = this.state.posts.sort(function (a, b) {
+      return b.score - a.score;
+    });
+    this.setState({ posts: scoreSorted });
+  };
+
   render() {
     return (
       <div>
@@ -45,6 +52,7 @@ class App extends React.Component {
         <button onClick={this.showBoasts}>See only Boasts</button>
         <button onClick={this.showRoasts}>See only Roasts</button>
         <button onClick={this.showAllPosts}>See all posts</button>
+        <button onClick={this.sortByScore}>Sort posts by score</button>
         <div>
           {this.state.posts.map((post) => {
             return (
