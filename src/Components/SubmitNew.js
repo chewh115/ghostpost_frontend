@@ -15,6 +15,7 @@ class SubmitNewPost extends React.Component {
     this.setState({ post: e.target.value });
   };
 
+  // This was very helpful with figuring out the correct headers: https://jasonwatmore.com/post/2020/02/01/react-fetch-http-post-request-examples
   handleCreate = () => {
     fetch(API_HOST, {
       method: "POST",
